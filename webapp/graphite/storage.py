@@ -360,8 +360,15 @@ class GzippedWhisperFile(WhisperFile):
 
 
 class RRDFile(Branch):
+
+  @staticmethod
+  def _convert_fs_path(fs_path):
+    if isinstance(fs_path, unicode):
+      fs_path = fs_path.encode(sys.getfilesystemencoding())
+    return fs_path
+
   def getDataSources(self):
-    info = rrdtool.info(self.fs_path)
+    info = rrdtool.info(RRDFile._convert_fs_path(self.fs_path))
     if 'ds' in info:
       return [RRDDataSource(self, datasource_name) for datasource_name in info['ds']]
     else:
@@ -370,7 +377,7 @@ class RRDFile(Branch):
       return [ RRDDataSource(self, ds) for ds in datasources ]
 
   def getRetention(self):
-    info = rrdtool.info(self.fs_path)
+    info = rrdtool.info(RRDFile._convert_fs_path(self.fs_path))
     if 'rra' in info:
       rras = info['rra']
     else:
