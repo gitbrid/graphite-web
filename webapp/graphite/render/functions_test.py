@@ -90,6 +90,18 @@ class FunctionsTest(unittest.TestCase):
         TestNPercentile(90, [ [50], [91], [181], [271], [90], [180], [270], [270] ])
         TestNPercentile(95, [ [50], [96], [191], [286], [95], [190], [285], [285] ])
 
+    def testSortingByName(self):
+        seriesList = []
+        config = [[1000, 100, 10, 0], [1000, 100, 10, 1]]
+        for i, c in enumerate(config):
+            seriesList.append(TimeSeries('Test(%d)' % i, 0, 0, 0, c))
+
+        self.assertEqual(1110, functions.safeSum(seriesList[0]))
+
+        result = functions.sortByTotal({}, seriesList)
+
+        self.assertEqual(1111, functions.safeSum(result[0]))
+        self.assertEqual(1110, functions.safeSum(result[1]))
 
 if __name__ == '__main__':
     unittest.main()
